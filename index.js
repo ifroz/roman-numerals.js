@@ -31,20 +31,14 @@ var digitToRoman = function(d, places) {
 };
 
 var getPlacesForMultiplier = function(multiplier) {
-  return _.tap({
+  return {
     1: getNumeral(multiplier),
     5: getNumeral(5 * multiplier),
     10: getNumeral(10 * multiplier)
-  }, console.log);
+  };
 };
 
 var getNumeral = function(n) {
-  //if (romanDigits[n]) {
-  //  return romanDigits[n];
-  //}
-  //console.log('WTF', n, n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
-  //return romanDigits[n] ||
-  //    fill(n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
   return romanDigits[n] || '';
 };
 
@@ -56,16 +50,31 @@ var toInRangeRoman = function(n, magnitude) {
   magnitude = magnitude || 0;
   var multiplier = Math.pow(10, magnitude);
   return (Math.floor(n) > 9 ? toInRangeRoman(n / 10, magnitude + 1) : '') +
-      digitToRoman(getLastDigit(n), getPlacesForMultiplier(multiplier));
+      digitToRoman(Math.floor(n) % 10, getPlacesForMultiplier(multiplier));
+};
+
+var romanOveragePrefix = function(n) {
+  return fill(Math.floor(n / romanDigitsMaxKey),romanDigits[romanDigitsMaxKey]);
 };
 
 var toRoman = function(n) {
-  return fill(Math.floor(n / romanDigitsMaxKey),
-          romanDigits[romanDigitsMaxKey]) +
-      toInRangeRoman(n % romanDigitsMaxKey);
-}
+  return romanOveragePrefix(n) + toInRangeRoman(n % romanDigitsMaxKey);
+};
 
-var fromRoman = function(r) {};
+var getRomanValues = function() {
+  return _(romanDigits).invert().mapValues(_.ary(parseInt, 1)).value();
+};
+
+var fromRoman = function(r) {
+  var romanValues = getRomanValues();
+  var numbers = r.split('').map(function(char) { return romanValues[char]; });
+
+  return _.reduce(_.map(numbers, function(v, idx) {
+    return ((_.max(numbers.slice(idx)) > v) ? -1 : 1) * v;
+  }), function(sum, num) {
+    return sum + num;
+  });
+};
 
 module.exports = {
   toRoman: toRoman,

@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 var toRoman = require('./index').toRoman;
-
+var fromRoman = require('./index').fromRoman;
+var _ =  require('lodash');
 describe('romanNumerals', function() {
   describe('#toRoman', function() {
     it('should return some I-s for 1..3', function() {
@@ -28,6 +29,7 @@ describe('romanNumerals', function() {
 
     it('should work for numbers < 1000', function() {
       expect(toRoman(200)).to.equal('CC');
+      expect(toRoman(794)).to.equal('DCCXCIV');
       expect(toRoman(678)).to.equal('DCLXXVIII');
       expect(toRoman(999)).to.equal('CMXCIX');
     });
@@ -47,7 +49,17 @@ describe('romanNumerals', function() {
     });
   });
 
-  describe('#fromNumeral', function() {
+  describe('#fromRoman', function() {
+    it('should work digits which only has to be summarized', function() {
+      expect(fromRoman('I')).to.equal(1);
+      expect(fromRoman('III')).to.equal(3);
+      expect(fromRoman('MCCCXXXVII')).to.equal(1337);
+      expect(fromRoman('MMXV')).to.equal(2015);
+    });
 
+    it('should substact instead if larger value follows', function() {
+      expect(fromRoman('IV')).to.equal(4);
+      expect(fromRoman('CMXCIX')).to.equal(999);
+    });
   });
 });
