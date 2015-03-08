@@ -8,20 +8,22 @@ var romanDigits = {
   500: 'D',
   1000: 'M'
 };
-var romanDigitsMaxKey = _.max(_.keys(romanDigits).map(_.ary(parseInt, 1)));
+var romanDigitsMaxKey = _(romanDigits).keys().map(_.ary(parseInt, 1)).max();
 
 var fill = function(count, char) {
   return _.range(count).map(_.constant(char)).join('');
 };
 
 var digitToRoman = function(d, places) {
-  if (d <= 3) {
+  if (d === 0) {
+    return '';
+  } else if (d <= 3) {
     return fill(d, places[1]);
   } else if (d <= 5) {
     return fill(5 - d, places[1]) + places[5];
   } else if (d <= 8) {
     return places[5] + fill(d - 5, places[1]);
-  } else if (d <= 9) {
+  } else if (d === 9) {
     return fill(10 - d, places[1]) + places[10];
   } else {
     throw new Error(d.toString() + ' is not a digit');
@@ -29,27 +31,44 @@ var digitToRoman = function(d, places) {
 };
 
 var getPlacesForMultiplier = function(multiplier) {
-  return {
+  return _.tap({
     1: getNumeral(multiplier),
     5: getNumeral(5 * multiplier),
     10: getNumeral(10 * multiplier)
-  };
+  }, console.log);
 };
 
 var getNumeral = function(n) {
-  return romanDigits[n] ||
-      fill(n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
+  //if (romanDigits[n]) {
+  //  return romanDigits[n];
+  //}
+  //console.log('WTF', n, n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
+  //return romanDigits[n] ||
+  //    fill(n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
+  return romanDigits[n] || '';
 };
 
 var getLastDigit = function(number) {
   return parseInt(Math.floor(number).toString().split('').pop());
 };
 
-var toRoman = function(n, magnitude) {
+var toInRangeRoman = function(n, magnitude) {
   magnitude = magnitude || 0;
   var multiplier = Math.pow(10, magnitude);
-  return (Math.floor(n) > 9 ? toRoman(n / 10, magnitude + 1) : '') +
+  return (Math.floor(n) > 9 ? toInRangeRoman(n / 10, magnitude + 1) : '') +
       digitToRoman(getLastDigit(n), getPlacesForMultiplier(multiplier));
 };
 
-module.exports = { toRoman: toRoman };
+var toRoman = function(n) {
+  return fill(Math.floor(n / romanDigitsMaxKey),
+          romanDigits[romanDigitsMaxKey]) +
+      toInRangeRoman(n % romanDigitsMaxKey);
+}
+
+var fromRoman = function(r) {};
+
+module.exports = {
+  toRoman: toRoman,
+  fromRoman: fromRoman,
+  digitToRoman: digitToRoman
+};
