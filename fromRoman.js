@@ -8,16 +8,11 @@ var summarize = function(sum, num) {
   return sum + num;
 };
 
-var getRomanValues = function(romanDigits) {
-  return _(romanDigits).invert().mapValues(_.ary(parseInt, 1)).value();
-};
-
 module.exports = function fromRomanFactory(romanDigits) {
-  var romanValues = getRomanValues(romanDigits);
+  var digitValues = _(romanDigits).invert().mapValues(_.ary(parseInt, 1)).value();
   var romanCharAbsoluteValue = function(char) {
-    return romanValues[char];
+    return digitValues[char];
   };
-
   return function fromRoman(r) {
     return _(r.split('')).
         map(romanCharAbsoluteValue).
