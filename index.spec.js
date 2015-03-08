@@ -66,12 +66,12 @@ describe('romanNumerals', function() {
     });
   });
 
-  it('fromRoman(toRoman(...)); should be identity', function() {
+  it('fromRoman(toRoman(0..1000)); should all be identity', function() {
     var max = 1000;
     var original = _.range(max).map(function(x) { return x + 1; });
     var transformed = original.map(toRoman).map(fromRoman);
     expect(transformed).to.deep.equal(original);
-  })
+  });
 
   it('should respond to function call', function() {
     expect(romanNumerals('MMXV')).to.equal(2015);

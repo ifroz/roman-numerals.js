@@ -11,7 +11,7 @@ var romanDigits = {
 var romanDigitsMaxKey = _(romanDigits).keys().map(_.ary(parseInt, 1)).max();
 
 var fill = function(count, char) {
-  return _.range(count).map(_.constant(char)).join('');
+  return _(count).range().fill(char).join('');
 };
 
 var digitToRoman = function(d, places) {
@@ -26,7 +26,7 @@ var digitToRoman = function(d, places) {
   } else if (d === 9) {
     return fill(10 - d, places[1]) + places[10];
   } else {
-    throw new Error(d.toString() + ' is not a digit');
+    throw new Error('"' + d.toString() + '" is not a digit');
   }
 };
 
@@ -61,22 +61,9 @@ var toRoman = function(n) {
   return romanOveragePrefix(n) + toInRangeRoman(n % romanDigitsMaxKey);
 };
 
-var getRomanValues = function() {
-  return _(romanDigits).invert().mapValues(_.ary(parseInt, 1)).value();
-};
-
-var fromRoman = function(r) {
-  var romanValues = getRomanValues();
-  var numbers = r.split('').map(function(char) { return romanValues[char]; });
-  return _.reduce(_.map(numbers, function(v, idx) {
-    return ((_.max(numbers.slice(idx)) > v) ? -1 : 1) * v;
-  }), function(sum, num) {
-    return sum + num;
-  });
-};
-
+var fromRoman = require('./fromRoman')(romanDigits);
 module.exports = function(input) {
-  return isNaN(parseInt(input)) ? fromRoman(input) : toRoman(input);
+  return (isNaN(parseInt(input)) ? fromRoman : toRoman)(input);
 };
 
 _.assign(module.exports, {
