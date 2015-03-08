@@ -8,37 +8,48 @@ var romanDigits = {
   500: 'D',
   1000: 'M'
 };
+var romanDigitsMaxKey = _.max(_.keys(romanDigits).map(_.ary(parseInt, 1)));
 
 var fill = function(count, char) {
   return _.range(count).map(_.constant(char)).join('');
 };
 
-var getNumeral = function(n) {
-  return numerals[n] || fill(n / 1000, 'M');
-};
-
-var digitToRoman = function(d, one, five, ten) {
+var digitToRoman = function(d, places) {
   if (d <= 3) {
-    return fill(d, one);
+    return fill(d, places[1]);
   } else if (d <= 5) {
-    return fill(5 - d, one) + five;
+    return fill(5 - d, places[1]) + places[5];
   } else if (d <= 8) {
-    return five + fill(d - 5, one);
+    return places[5] + fill(d - 5, places[1]);
   } else if (d <= 9) {
-    return fill(10 - d, one) + ten;
+    return fill(10 - d, places[1]) + places[10];
   } else {
     throw new Error(d.toString() + ' is not a digit');
   }
+};
+
+var getPlacesForMultiplier = function(multiplier) {
+  return {
+    1: getNumeral(multiplier),
+    5: getNumeral(5 * multiplier),
+    10: getNumeral(10 * multiplier)
+  };
+};
+
+var getNumeral = function(n) {
+  return romanDigits[n] ||
+      fill(n / romanDigitsMaxKey, romanDigits[romanDigitsMaxKey]);
+};
+
+var getLastDigit = function(number) {
+  return parseInt(Math.floor(number).toString().split('').pop());
 };
 
 var toRoman = function(n, magnitude) {
   magnitude = magnitude || 0;
   var multiplier = Math.pow(10, magnitude);
   return (Math.floor(n) > 9 ? toRoman(n / 10, magnitude + 1) : '') +
-      digitToRoman(parseInt(Math.floor(n).toString().split('').pop()),
-          getNumeral(multiplier),
-          getNumeral(5 * multiplier),
-          getNumeral(10 * multiplier));
+      digitToRoman(getLastDigit(n), getPlacesForMultiplier(multiplier));
 };
 
 module.exports = { toRoman: toRoman };
