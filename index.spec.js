@@ -1,7 +1,10 @@
 var expect = require('chai').expect;
-var toRoman = require('./index').toRoman;
-var fromRoman = require('./index').fromRoman;
 var _ =  require('lodash');
+
+var romanNumerals = require('./index');
+var toRoman = romanNumerals.toRoman;
+var fromRoman = romanNumerals.fromRoman;
+
 describe('romanNumerals', function() {
   describe('#toRoman', function() {
     it('should return some I-s for 1..3', function() {
@@ -62,4 +65,17 @@ describe('romanNumerals', function() {
       expect(fromRoman('CMXCIX')).to.equal(999);
     });
   });
+
+  it('fromRoman(toRoman(...)); should be identity', function() {
+    var max = 1000;
+    var original = _.range(max).map(function(x) { return x + 1; });
+    var transformed = original.map(toRoman).map(fromRoman);
+    expect(transformed).to.deep.equal(original);
+  })
+
+  it('should respond to function call', function() {
+    expect(romanNumerals('MMXV')).to.equal(2015);
+    expect(romanNumerals(654)).to.equal('DCLIV');
+    expect(romanNumerals('654')).to.equal('DCLIV');
+  })
 });

@@ -68,7 +68,6 @@ var getRomanValues = function() {
 var fromRoman = function(r) {
   var romanValues = getRomanValues();
   var numbers = r.split('').map(function(char) { return romanValues[char]; });
-
   return _.reduce(_.map(numbers, function(v, idx) {
     return ((_.max(numbers.slice(idx)) > v) ? -1 : 1) * v;
   }), function(sum, num) {
@@ -76,8 +75,12 @@ var fromRoman = function(r) {
   });
 };
 
-module.exports = {
+module.exports = function(input) {
+  return isNaN(parseInt(input)) ? fromRoman(input) : toRoman(input);
+};
+
+_.assign(module.exports, {
   toRoman: toRoman,
   fromRoman: fromRoman,
   digitToRoman: digitToRoman
-};
+});
