@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var negateIfSucceededByBigger = function(v, idx, whole) {
+var negateIfHasBiggerSuccessors = function(v, idx, whole) {
   return ((_.max(whole.slice(idx)) > v) ? -1 : 1) * v;
 };
 
@@ -12,7 +12,7 @@ var getRomanValues = function(romanDigits) {
   return _(romanDigits).invert().mapValues(_.ary(parseInt, 1)).value();
 };
 
-module.exports = function(romanDigits) {
+module.exports = function fromRomanFactory(romanDigits) {
   var romanValues = getRomanValues(romanDigits);
   var romanCharAbsoluteValue = function(char) {
     return romanValues[char];
@@ -21,7 +21,7 @@ module.exports = function(romanDigits) {
   return function fromRoman(r) {
     return _(r.split('')).
         map(romanCharAbsoluteValue).
-        map(negateIfSucceededByBigger).
+        map(negateIfHasBiggerSuccessors).
         reduce(summarize);
   };
 };

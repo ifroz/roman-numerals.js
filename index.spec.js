@@ -37,7 +37,7 @@ describe('romanNumerals', function() {
       expect(toRoman(999)).to.equal('CMXCIX');
     });
 
-    it('should work for numbers < 5000', function() {
+    it('should work for numbers 5000', function() {
       expect(toRoman(2015)).to.equal('MMXV');
     });
 
@@ -75,6 +75,7 @@ describe('romanNumerals', function() {
 
   it('should respond to function call', function() {
     expect(romanNumerals('MMXV')).to.equal(2015);
+    expect(romanNumerals('MMMMMMMDCLIV')).to.equal(7654);
     expect(romanNumerals(654)).to.equal('DCLIV');
     expect(romanNumerals('654')).to.equal('DCLIV');
   })
