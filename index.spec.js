@@ -6,6 +6,20 @@ var toRoman = romanNumerals.toRoman;
 var fromRoman = romanNumerals.fromRoman;
 
 describe('romanNumerals', function() {
+  it('fromRoman(toRoman(0..1000)); should all be identity', function() {
+    var max = 1000;
+    var original = _.range(max).map(function(x) { return x + 1; });
+    var transformed = original.map(toRoman).map(fromRoman);
+    expect(transformed).to.deep.equal(original);
+  });
+
+  it('should respond to function call', function() {
+    expect(romanNumerals('MMXV')).to.equal(2015);
+    expect(romanNumerals('MMMMMMMDCLIV')).to.equal(7654);
+    expect(romanNumerals(654)).to.equal('DCLIV');
+    expect(romanNumerals('654')).to.equal('DCLIV');
+  })
+
   describe('#toRoman', function() {
     it('should return some I-s for 1..3', function() {
       expect(toRoman(1)).to.equal('I');
@@ -65,18 +79,4 @@ describe('romanNumerals', function() {
       expect(fromRoman('CMXCIX')).to.equal(999);
     });
   });
-
-  it('fromRoman(toRoman(0..1000)); should all be identity', function() {
-    var max = 1000;
-    var original = _.range(max).map(function(x) { return x + 1; });
-    var transformed = original.map(toRoman).map(fromRoman);
-    expect(transformed).to.deep.equal(original);
-  });
-
-  it('should respond to function call', function() {
-    expect(romanNumerals('MMXV')).to.equal(2015);
-    expect(romanNumerals('MMMMMMMDCLIV')).to.equal(7654);
-    expect(romanNumerals(654)).to.equal('DCLIV');
-    expect(romanNumerals('654')).to.equal('DCLIV');
-  })
 });
